@@ -18,9 +18,9 @@ const routes = [
     }
   },
   {
-    path: "/login",
-    name: "Login",
-    component: () => import("@/views/TabLogin.vue"),
+    path: "/auth",
+    name: "Auth",
+    component: () => import("@/views/TabAuth.vue"),
     meta: {
       layout: "AppLayoutDefault"
     }
