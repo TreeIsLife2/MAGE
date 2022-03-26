@@ -1,13 +1,84 @@
 <template>
-  <div id="loginentry" class="2xl:grid 2xl:grid-cols-loginview-outer 2xl:grid-rows-1 h-full dark:bg-gray-900">
-    <div class="grid grid-cols-2 lg:grid-cols-3 grid-rows-loginview gap-x-1 gap-y-4 h-full 2xl:col-start-2">
-      <div class="text-center row-start-1 col-start-1 col-end-3 lg:col-end-4">
-        <h2 class="text-3xl">Set up new credentials</h2>
+  <div id="loginentry" class="dark:bg-gray-900">
+    <div class="grid grid-cols-2 grid-rows-1">
+      <div class="form-wrapper col-start-1 row-start-1">
+        <div class="form-input-wrapper">
+          <div class="flex justify-between items-center">
+            <label for="accountName">Username</label>
+            <button class="svg-icon-button" title="Show help for this field" @click="this.helpPage = 'credentials';">
+              <svg-icon icon="question-mark-circle" width="25" height="25" />
+            </button>
+          </div>
+          <input type="text" id="accountName" name="accountName" v-model.trim="accountName">
+        </div>
+
+        <div class="form-input-wrapper">
+          <div class="flex justify-between items-center">
+            <label for="botPasswordName">Bot password name</label>
+            <button class="svg-icon-button" title="Show help for this field" @click="this.helpPage = 'credentials';">
+              <svg-icon icon="question-mark-circle" width="25" height="25" />
+            </button>
+          </div>
+          <input type="text" id="botPasswordName" name="botPasswordName" v-model.trim="botPasswordName">
+        </div>
+
+        <div class="form-input-wrapper">
+          <div class="flex justify-between items-center">
+            <label for="botPassword">Bot password</label>
+            <button class="svg-icon-button" title="Show help for this field" @click="this.helpPage = 'credentials';">
+              <svg-icon icon="question-mark-circle" width="25" height="25" />
+            </button>
+          </div>
+          <input type="text" id="botPassword" name="botPassword" v-model.trim="botPassword" disabled>
+        </div>
+
+        <div class="form-input-wrapper">
+          <div class="flex justify-between items-center">
+            <label for="addTo">Attach credentials to:</label>
+            <button class="svg-icon-button" title="Show help for this field" @click="this.helpPage = 'associating-credentials';">
+              <svg-icon icon="question-mark-circle" width="25" height="25" />
+            </button>
+          </div>
+          <select name="addTo" id="addTo" v-model.number="addTo" disabled>
+            <option value="-2" selected class="special-option">[+ Set up a new wiki farm]</option>
+            <option value="-1" class="special-option">[+ Set up a new standalone wiki]</option>
+            <option v-for="knownFarm in farms" :key="knownFarm.id" :value="knownFarm.id">{{ knownFarm.name }}</option>
+          </select>
+        </div>
+
+        <div class="form-input-wrapper">
+          <div v-if="creatingStandaloneWiki">
+            <div class="flex justify-between items-center">
+              <label for="urlField">URL</label>
+              <button class="svg-icon-button" title="Show help for this field" @click="this.helpPage = 'setting-up-wikis';">
+                <svg-icon icon="question-mark-circle" width="25" height="25" />
+              </button>
+            </div>
+            <input type="text" id="urlField" name="urlField" :value="wikiUrls[0]" @input="onUrlFieldInput" disabled="addingToExistingWikiOrFarm">
+          </div>
+          <div v-else>
+            <div class="flex justify-between items-center">
+              <label for="urlArea">URLs</label>
+              <button class="svg-icon-button" title="Show help for this field" @click="this.helpPage = 'setting-up-wikis';">
+                <svg-icon icon="question-mark-circle" width="25" height="25" />
+              </button>
+            </div>
+            <textarea id="urlArea" name="urlArea" :value="wikiUrls.join('\n')" @input="onUrlAreaInput" rows="4" :disabled="addingToExistingWikiOrFarm"></textarea>
+          </div>
+        </div>
+
+        <div class="form-input-wrapper">
+          <div class="flex justify-between items-center">
+            <label v-if="creatingStandaloneWiki" for="saveAs">Save wiki as:</label>
+            <label v-else for="saveAs">Save farm as:</label>
+            <button class="svg-icon-button" title="Show help for this field" @click="this.helpPage = 'setting-up-wikis';">
+              <svg-icon icon="question-mark-circle" width="25" height="25" />
+            </button>
+          </div>
+          <input type="text" id="saveAs" name="saveAs" v-model.trim="saveAs" :disabled="addingToExistingWikiOrFarm">
+        </div>
       </div>
-
-      <div class="hidden select-none lg:flex lg:justify-center lg:items-center lg:col-start-3 lg:row-start-2 lg:row-end-3"><svg-icon icon="magelogo" noinvert="true" /></div>
-
-      <div class="help-wrapper">
+      <div class="help-wrapper col-start-2 row-start-1">
         <div v-if="helpPage === 'login-screen'">
           <div class="header">
             <h3>Help: Login Screen</h3>
@@ -94,90 +165,7 @@
             it yourself. https://github.com/MediaWikiAGE/MAGE</p>
         </div>
       </div>
-
-      <div class="form-wrapper">
-        <div class="form-input-wrapper row-start-2">
-          <div class="flex justify-between items-center">
-            <label for="accountName">Username</label>
-            <button class="svg-icon-button" title="Show help for this field" @click="this.helpPage = 'credentials';">
-              <svg-icon icon="question-mark-circle" width="25" height="25" />
-            </button>
-          </div>
-          <input type="text" id="accountName" name="accountName" v-model.trim="accountName">
-        </div>
-
-        <div class="form-input-wrapper row-start-3">
-          <div class="flex justify-between items-center">
-            <label for="botPasswordName">Bot password name</label>
-            <button class="svg-icon-button" title="Show help for this field" @click="this.helpPage = 'credentials';">
-              <svg-icon icon="question-mark-circle" width="25" height="25" />
-            </button>
-          </div>
-          <input type="text" id="botPasswordName" name="botPasswordName" v-model.trim="botPasswordName">
-        </div>
-
-        <div class="form-input-wrapper row-start-4">
-          <div class="flex justify-between items-center">
-            <label for="botPassword">Bot password</label>
-            <button class="svg-icon-button" title="Show help for this field" @click="this.helpPage = 'credentials';">
-              <svg-icon icon="question-mark-circle" width="25" height="25" />
-            </button>
-          </div>
-          <input type="text" id="botPassword" name="botPassword" v-model.trim="botPassword">
-        </div>
-
-        <div class="form-input-wrapper row-start-5">
-          <div class="flex justify-between items-center">
-            <label for="addTo">Attach credentials to:</label>
-            <button class="svg-icon-button" title="Show help for this field" @click="this.helpPage = 'associating-credentials';">
-              <svg-icon icon="question-mark-circle" width="25" height="25" />
-            </button>
-          </div>
-          <select name="addTo" id="addTo" v-model.number="addTo">
-            <option value="-2" selected class="special-option">[+ Set up a new wiki farm]</option>
-            <option value="-1" class="special-option">[+ Set up a new standalone wiki]</option>
-            <option v-for="knownFarm in farms" :key="knownFarm.id" :value="knownFarm.id">{{ knownFarm.name }}</option>
-          </select>
-        </div>
-
-        <div class="form-input-wrapper row-start-6">
-          <div v-if="creatingStandaloneWiki">
-            <div class="flex justify-between items-center">
-              <label for="urlField">URL</label>
-              <button class="svg-icon-button" title="Show help for this field" @click="this.helpPage = 'setting-up-wikis';">
-                <svg-icon icon="question-mark-circle" width="25" height="25" />
-              </button>
-            </div>
-            <input type="text" id="urlField" name="urlField" :value="wikiUrls[0]" @input="onUrlFieldInput" :disabled="addingToExistingWikiOrFarm">
-          </div>
-          <div v-else>
-            <div class="flex justify-between items-center">
-              <label for="urlArea">URLs</label>
-              <button class="svg-icon-button" title="Show help for this field" @click="this.helpPage = 'setting-up-wikis';">
-                <svg-icon icon="question-mark-circle" width="25" height="25" />
-              </button>
-            </div>
-            <textarea id="urlArea" name="urlArea" :value="wikiUrls.join('\n')" @input="onUrlAreaInput" rows="4" :disabled="addingToExistingWikiOrFarm"></textarea>
-          </div>
-        </div>
-
-        <div class="form-input-wrapper row-start-7">
-          <div class="flex justify-between items-center">
-            <label v-if="creatingStandaloneWiki" for="saveAs">Save wiki as:</label>
-            <label v-else for="saveAs">Save farm as:</label>
-            <button class="svg-icon-button" title="Show help for this field" @click="this.helpPage = 'setting-up-wikis';">
-              <svg-icon icon="question-mark-circle" width="25" height="25" />
-            </button>
-          </div>
-          <input type="text" id="saveAs" name="saveAs" v-model.trim="saveAs" :disabled="addingToExistingWikiOrFarm">
-        </div>
-      </div>
-
-      <div class="form-input-wrapper row-start-3 col-start-1 col-end-3 lg:col-end-4 place-self-center">
-        <input type="button" id="saveLogin" name="saveLogin" value="Save login" @click="saveLogin" :disabled="blockSaving" class="px-1.5 py-0.5">
-      </div>
-
-      <div class="row-start-4 col-start-1 col-end-3 lg:col-end-4">
+      <div class="mb-1">
         <span v-if="validationErrors.length > 0">Errors:</span>
         <ul class="bg-gray-100 dark:bg-gray-800 text-red-900 dark:text-red-400 text-sm">
           <li v-for="(error, index) in validationErrors" :key="index">{{ error }}</li>
@@ -185,6 +173,9 @@
       </div>
     </div>
   </div>
+  <span class="form-input-wrapper place-self-center">
+    <input type="button" id="saveLogin" name="saveLogin" value="Save login" @click="saveLogin" :disabled="blockSaving" class="btn border-0 cursor-pointer">
+  </span>
 </template>
 
 <script>
@@ -381,6 +372,7 @@ export default {
   beforeUnmount: function() {
     this.commitChoices();
   },
+
   components: { SvgIcon },
 };
 </script>
@@ -392,16 +384,14 @@ export default {
 }
 
 .help-text {
-  @apply col-start-1 text-right text-sm;
+  @apply text-right text-sm;
 }
 
 .form-wrapper {
-  @apply col-start-1;
   @apply overflow-y-auto;
   @apply px-1;
 }
 .form-input-wrapper {
-  @apply col-start-1;
 }
 .form-wrapper .form-input-wrapper + .form-input-wrapper {
   @apply mt-4;
@@ -434,9 +424,7 @@ export default {
 }
 
 .help-wrapper {
-  @apply row-start-2 col-start-2;
   @apply border-l border-gray-800 dark:border-gray-400 pl-1;
-  @apply lg:border-r pr-1;
   @apply overflow-y-auto;
 }
 .help-wrapper .header {
