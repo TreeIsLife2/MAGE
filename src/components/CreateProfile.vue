@@ -1,5 +1,5 @@
 <template>
-  <div id="loginentry" class="dark:bg-gray-900">
+  <div id="loginentry">
     <div class="grid grid-cols-2 grid-rows-1">
       <div class="form-wrapper col-start-1 row-start-1">
         <div class="form-input-wrapper">
