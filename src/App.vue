@@ -34,7 +34,7 @@
         menuItems: [
           { name: "home", buttonImage: "magelogo", title: "Home", url: "/" },
           { name: "about", buttonImage: "tag", title: "About", url: "/about" },
-          { name: "login", buttonImage: "identification", title: "Login Manager", url: "/login" },          
+          { name: "auth", buttonImage: "identification", title: "Login Manager", url: "/auth" },          
           { name: "tasks", buttonImage: "pencil-alt", title: "Task List", url: "/tasks" },
           { name: "settings", buttonImage: "cog", title: "Settings", url: "/settings" },          
         ],
