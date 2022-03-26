@@ -120,7 +120,11 @@
     color: ButtonText;
     background: ButtonFace;
   }
-
+  
+  .btn {
+    @apply bg-gray-400 text-gray-100 p-1 rounded-md ml-1 hover:bg-gray-600 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-500;
+  }
+  
   #buttonMobileMenu {
     border-radius: 50%;
     width: 25px;
